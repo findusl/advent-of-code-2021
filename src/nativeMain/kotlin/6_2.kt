@@ -1,11 +1,11 @@
-fun main_6_1(args: Array<String>) {
+fun main_6_2(args: Array<String>) {
 	val lines = readLinesFromFile(args.firstOrNull() ?: "6.txt")
-	val fishPerAge = IntArray(9)
+	val fishPerAge = LongArray(9)
 	lines.first().split(',')
 		.map { it.toInt() }
 		.forEach { fishPerAge[it]++ }
 
-	for (day in 1..80) {
+	for (day in 1..256) {
 		val breedingFish = fishPerAge[0]
 		for (generation in 1..8) {
 			fishPerAge[generation - 1] = fishPerAge[generation]
