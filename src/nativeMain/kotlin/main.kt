@@ -1,3 +1,8 @@
+import kotlin.system.measureTimeMillis
+
 fun main(args: Array<String>) {
-	main_3_1_overengineered(args)
+	val timeTaken = measureTimeMillis {
+		main_5_2(args)
+	}
+	println("Computation took $timeTaken ms")
 }

@@ -1,7 +1,6 @@
 import okio.*
 import okio.Path.Companion.toPath
 
-
 @Throws(IOException::class)
 fun readLinesFromFile(filePath: String): List<String> {
 	val path = filePath.toPath()
