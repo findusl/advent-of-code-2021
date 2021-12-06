@@ -13,8 +13,9 @@ repositories {
 kotlin {
 	val hostOs = System.getProperty("os.name")
 	val isMingwX64 = hostOs.startsWith("Windows")
+	val isMacOS = hostOs == "Mac OS X"
 	val nativeTarget = when {
-		hostOs == "Mac OS X" -> macosX64("native")
+		isMacOS -> macosX64("native")
 		hostOs == "Linux" -> linuxX64("native")
 		isMingwX64 -> mingwX64("native")
 		else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
@@ -27,22 +28,34 @@ kotlin {
 			}
 		}
 	}
+
 	sourceSets {
 		val okioVersion = "3.0.0"
 		val nativeMain by getting {
 			dependencies {
-				// locally published sample from jetbrains
-				// https://github.com/JetBrains/kotlin/tree/master/kotlin-native/samples/libcurl
-				implementation("org.jetbrains.kotlin.sample.native:libcurl:+")
-
 				implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
 				// for file io
 				implementation("com.squareup.okio:okio:$okioVersion")
-				implementation("com.squareup.okio:okio-macosx64:$okioVersion")
+				if (isMacOS)
+					implementation("com.squareup.okio:okio-macosx64:$okioVersion")
+				else if (isMingwX64)
+					implementation("com.squareup.okio:okio-mingwx64:$okioVersion")
 			}
 		}
 		val nativeTest by getting
+		if (isMacOS) {
+			// I don't have the curl stuff figured out for windows yet
+			// Not sure if this will work on macos, but at least it no longer crashes on windows.
+			val macosMain by getting {
+				dependencies {
+					dependsOn(nativeMain)
+					// locally published sample from jetbrains
+					// https://github.com/JetBrains/kotlin/tree/master/kotlin-native/samples/libcurl
+					implementation("org.jetbrains.kotlin.sample.native:libcurl:+")
+				}
+			}
+		}
 	}
 }
 
